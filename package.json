@@ -2,10 +2,13 @@
   "name": "vk-bot-framework",
   "version": "1.0.0",
   "description": "VK Bot advanced framework with cool features. :)",
-  "types": "dist/index.d.ts",
-  "main": "dist/index.ts",
+  "types": "dist/bot-framework.d.ts",
+  "main": "dist/bot-framework.ts",
   "prepublish": "tsc",
-  "repository": "https://github.com/YmerDev/vk-bot-framework",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YmerDev/vk-bot-framework"
+  },
   "author": "YmerDev <yaymer224@gmail.com>",
   "license": "MIT",
   "scripts": {

@@ -1,13 +1,13 @@
 import { Context } from "./context";
 import { BotFramework } from './bot-framework';
 
-interface IMiddlewares {
+interface IMiddleware {
     callback: Function;
     triggers?: any[];
 }
 
-class MiddlewaresManager {
-    private middlewares: IMiddlewares[] = [];
+class MiddlewareManager {
+    private middleware: IMiddleware[] = [];
 
     constructor(
         private bot: BotFramework,
@@ -18,12 +18,12 @@ class MiddlewaresManager {
      * 
      * @param {Function} middleware - Middleware function
      * 
-     * @returns {MiddlewaresManager}
+     * @returns {MiddlewareManager}
      */
-    public use(middleware: Function): MiddlewaresManager {
-        const length = this.middlewares.length;
+    public use(middleware: Function): MiddlewareManager {
+        const length = this.middleware.length;
 
-        this.middlewares.push({
+        this.middleware.push({
             callback: (context: Context) =>
             middleware(
                 context,
@@ -38,21 +38,21 @@ class MiddlewaresManager {
      * Command trigger
      * 
      * @param {RegExp | string} triggersList 
-     * @param {Function[]} middlewares 
+     * @param {Function[]} middleware
      * 
-     * @returns {MiddlewaresManager}
+     * @returns {MiddlewareManager}
      */
-    public command(triggersList: any, ...middlewares: Function[]): MiddlewaresManager {
+    public command(triggersList: any, ...middleware: Function[]): MiddlewareManager {
         const triggers =
         (!Array.isArray(triggersList) ? [triggersList] : triggersList)
         .map(trigger =>
             trigger instanceof RegExp ? trigger : trigger.toLowerCase()
         );
 
-        middlewares.forEach(callback => {
-            const length = this.middlewares.length;
+        middleware.forEach(callback => {
+            const length = this.middleware.length;
 
-            this.middlewares.push({
+            this.middleware.push({
                 callback: (context: Context) => callback(context, () => this.next(context, length)),
                 triggers,
             });
@@ -68,19 +68,19 @@ class MiddlewaresManager {
      * @param {string | string[]} event 
      * @param {Function[]} middleware 
      * 
-     * @returns {MiddlewaresManager}
+     * @returns {MiddlewareManager}
      */
-    public event(event: string | string[], ...middleware: Function[]): MiddlewaresManager {
+    public event(event: string | string[], ...middleware: Function[]): MiddlewareManager {
         this.command(event, ...middleware);
         return this;
     }
 
     public next(context: any | Context, length: number = -1): void {
-        if (this.middlewares.length <= length + 1) {
+        if (this.middleware.length <= length + 1) {
             return;
         }
 
-        const { callback, triggers } = this.middlewares[length + 1];
+        const { callback, triggers } = this.middleware[length + 1];
 
         const isTriggered = (triggers || []).some(
             (trigger: any) => {
@@ -114,11 +114,11 @@ class MiddlewaresManager {
         return this.next(context, length + 1);
     }
 
-    public cleanup(): MiddlewaresManager {
-        this.middlewares = [];
+    public cleanup(): MiddlewareManager {
+        this.middleware = [];
 
         return this;
     }
 }
 
-export { MiddlewaresManager };
+export { MiddlewareManager };

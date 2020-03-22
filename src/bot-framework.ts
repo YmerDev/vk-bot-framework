@@ -1,4 +1,4 @@
-import { MiddlewaresManager } from "./middleware-manager";
+import { MiddlewareManager } from "./middleware-manager";
 import { VkApi } from "./api";
 import { Context } from "./context";
 
@@ -14,7 +14,7 @@ interface IObject {
 }
 
 class BotFramework {
-    public middleware: MiddlewaresManager;
+    public middleware: MiddlewareManager;
     public vk: VkApi;
 
     private longPollParams?: IObject = undefined;
@@ -23,13 +23,13 @@ class BotFramework {
         private settings: ISettings,
     ) {
 
-        this.middleware = new MiddlewaresManager(this);
+        this.middleware = new MiddlewareManager(this);
         this.vk = new VkApi(this.settings.access_token || '');
 
         if (this.settings.modules) {
             this.settings.modules.forEach(module => {
                 import(`./modules/${module}`).then(({ default: moduleClass }) => {
-                    this.middlewares.use(new moduleClass(this).middleware());
+                    this.middleware.use(new moduleClass(this).middleware());
                 });
             });
         }
@@ -63,7 +63,7 @@ class BotFramework {
         }
 
         this.startPolling(body.ts);
-        body.updates.forEach((update: any) => this.middlewares.next(new Context(update, this)));
+        body.updates.forEach((update: any) => this.middleware.next(new Context(update, this)));
     }
 
     public async sendMessage(peer_id: number, ...args: any) {

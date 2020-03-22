@@ -6,7 +6,7 @@ const bot = new BotFramework({
     access_token: process.env.TOKEN,
 });
 
-const event = (type, message) => bot.middlewares.next(new Context({
+const event = (type, message) => bot.middleware.next(new Context({
     type,
     object: {
         text: message,
@@ -17,14 +17,14 @@ const event = (type, message) => bot.middlewares.next(new Context({
     event_id: Math.random(),
 }));
 
-describe('middlewares', () => {
-    afterEach(bot.middlewares.cleanup);
+describe('middleware', () => {
+    afterEach(bot.middleware.cleanup);
 
     it('should call middleware with text trigger', done => {
         const type = 'message_new';
         const message = '/start';
 
-        bot.middlewares.command('/start', ctx => {
+        bot.middleware.command('/start', ctx => {
             expect(ctx.updateType).to.be.equal(type);
             expect(ctx.update.object.text).to.be.equal(message);
 
@@ -38,7 +38,7 @@ describe('middlewares', () => {
         const type = 'message_new';
         const message = 'Hello dear Ivan!';
 
-        bot.middlewares.command(/hello dear ([a-zA-Z]*)!/i, ctx => {
+        bot.middleware.command(/hello dear ([a-zA-Z]*)!/i, ctx => {
             expect(ctx.updateType).to.be.equal(type);
             expect(ctx.update.object.text).to.be.equal(message);
             expect(ctx.match[0]).to.be.equal('hello dear ivan!');
@@ -53,7 +53,7 @@ describe('middlewares', () => {
     it('should call middleware with event trigger', done => {
         const type = 'group_leave';
 
-        bot.middlewares.event(type, ctx => {
+        bot.middleware.event(type, ctx => {
             expect(ctx.updateType).to.be.equal(type);
 
             done();
@@ -66,7 +66,7 @@ describe('middlewares', () => {
         const type = 'message_new';
         const message = 'something';
 
-        bot.middlewares.use(ctx => {
+        bot.middleware.use(ctx => {
             expect(ctx.updateType).to.be.equal(type);
             expect(ctx.update.object.text).to.be.equal(message);
 

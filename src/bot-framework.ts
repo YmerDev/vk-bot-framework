@@ -2,6 +2,7 @@ import { MiddlewaresManager } from "./middleware-manager";
 import { VkApi } from "./api";
 import { Context } from "./context";
 
+/* TODO: move it out from here */
 interface ISettings {
     access_token?: string;
     group_id?: number;
@@ -13,7 +14,7 @@ interface IObject {
 }
 
 class BotFramework {
-    public middlewares: MiddlewaresManager;
+    public middleware: MiddlewaresManager;
     public vk: VkApi;
 
     private longPollParams?: IObject = undefined;
@@ -22,7 +23,7 @@ class BotFramework {
         private settings: ISettings,
     ) {
 
-        this.middlewares = new MiddlewaresManager(this);
+        this.middleware = new MiddlewaresManager(this);
         this.vk = new VkApi(this.settings.access_token || '');
 
         if (this.settings.modules) {
